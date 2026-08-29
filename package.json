@@ -1,0 +1,8 @@
+{
+  "name": "pbxmtl-ca",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/audit-site.mjs && node scripts/test-leads.mjs"
+  }
+}
