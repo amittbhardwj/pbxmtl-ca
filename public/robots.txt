@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pbxmtl.ca/sitemap.xml
+Host: pbxmtl.ca
