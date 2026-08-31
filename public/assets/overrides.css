@@ -33,3 +33,75 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
+
+/* ============================================================
+   PBX MTL — proof section styles
+   Scoped additions for #proof. Reuses existing tokens where
+   possible; falls back gracefully if custom props are absent.
+   Append to /assets/overrides.css (already loaded site-wide).
+   ============================================================ */
+
+.proof-section {
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 5vw, 4rem);
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.proof-section .section-head {
+  max-width: 46rem;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.proof-section .section-head h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  line-height: 1.2;
+  margin: 0.4em 0;
+}
+
+.proof-section .section-lede {
+  opacity: 0.85;
+  line-height: 1.65;
+}
+
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1.25rem;
+}
+
+.proof-card { height: 100%; }
+
+.proof-open {
+  outline: 1px dashed currentColor;
+  outline-offset: -6px;
+}
+
+.proof-list {
+  margin: 0.75em 0 1em;
+  padding: 0;
+  list-style: none;
+  line-height: 1.55;
+}
+
+.proof-list li {
+  position: relative;
+  padding-left: 1.4em;
+  margin-block: 0.4em;
+}
+
+.proof-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+.proof-footnote {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proof-card { transition: none; }
+}
