@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Barber booking — PBX MTL demo (fictional site)." />
+  <title>Booking — Barber | PBX MTL Demo</title>
+  <link rel="stylesheet" href="../booking.css" />
+  <!--
+    To enable Stripe Payment Element UI (still demo-confirm without backend):
+    <script>window.PBX_STRIPE_PUBLISHABLE_KEY = "pk_test_YOUR_KEY";</script>
+  -->
+</head>
+<body class="theme-barber ind-page">
+  <a class="skip-link" href="#booking-main">Skip to content</a>
+
+  <div class="demo-banner" role="status">
+    Demo mode — fictional PBX MTL site. Not a real shop.
+  </div>
+
+  <div class="booking-wrap">
+    <header class="booking-header">
+      <h1>Book an appointment</h1>
+      <p class="subtitle">Fictional barbershop — secure deposit (Stripe demo)</p>
+      <nav class="booking-nav" aria-label="Links">
+        <a href="/exemples/barbier/">← Back to salon</a>
+        <a href="../">Français</a>
+        <a href="https://pbxmtl.ca/">pbxmtl.ca</a>
+      </nav>
+    </header>
+
+    <ol class="progress" id="progress" aria-label="Booking steps"></ol>
+
+    <div class="booking-grid">
+      <main id="booking-main" class="panels" tabindex="-1">
+        <section class="panel panel-step" data-step="0" aria-labelledby="title-service">
+          <h2 id="title-service">Choose a service</h2>
+          <div class="options" id="options-service" role="group" aria-label="Services"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btn-next-service" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section class="panel panel-step" data-step="1" hidden aria-labelledby="title-barber">
+          <h2 id="title-barber">Choose your barber</h2>
+          <div class="options" id="options-barber" role="group" aria-label="Barbers"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-barber">Back</button>
+            <button type="button" class="btn btn-primary" id="btn-next-barber" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section class="panel panel-step" data-step="2" hidden aria-labelledby="title-date">
+          <h2 id="title-date">Choose a date</h2>
+          <p class="subtitle" style="margin-bottom:1rem;color:var(--cream-muted);font-size:0.9rem;">
+            Open Tuesday–Saturday · next availability
+          </p>
+          <div class="date-grid" id="options-date" role="group" aria-label="Dates"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-date">Back</button>
+            <button type="button" class="btn btn-primary" id="btn-next-date" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section class="panel panel-step" data-step="3" hidden aria-labelledby="title-time">
+          <h2 id="title-time">Choose a time</h2>
+          <div class="time-grid" id="options-time" role="group" aria-label="Times"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-time">Back</button>
+            <button type="button" class="btn btn-primary" id="btn-next-time" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section class="panel panel-step" data-step="4" hidden aria-labelledby="title-customer">
+          <h2 id="title-customer">Your details</h2>
+          <form id="customer-form" novalidate onsubmit="return false;">
+            <div class="form-group">
+              <label for="cust-name">Full name</label>
+              <input id="cust-name" name="name" type="text" autocomplete="name" required placeholder="Alex Tremblay" />
+            </div>
+            <div class="form-group">
+              <label for="cust-email">Email</label>
+              <input id="cust-email" name="email" type="email" autocomplete="email" required placeholder="alex@example.ca" />
+            </div>
+            <div class="form-group">
+              <label for="cust-phone">Phone</label>
+              <input id="cust-phone" name="phone" type="tel" autocomplete="tel" required placeholder="(514) 555-0100" />
+              <p class="hint">Used to confirm or change the appointment.</p>
+            </div>
+            <p class="form-error" id="customer-error" role="alert" aria-live="polite"></p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-secondary" id="btn-back-customer">Back</button>
+              <button type="button" class="btn btn-primary" id="btn-next-customer">Continue</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel panel-step" data-step="5" hidden aria-labelledby="title-payment">
+          <h2 id="title-payment">Pay the deposit</h2>
+          <div class="payment-box">
+            <span class="payment-mode-badge" id="payment-mode-badge">Demo mode</span>
+            <p class="payment-demo-note" id="payment-note"></p>
+            <div id="payment-element" aria-live="polite"></div>
+            <div class="btn-row">
+              <button type="button" class="btn btn-secondary" id="btn-back-payment">Back</button>
+              <button type="button" class="btn btn-primary btn-demo" id="btn-pay">Simulate payment (demo)</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-step" data-step="6" id="panel-confirm" hidden aria-labelledby="title-confirm">
+          <div class="confirm-box">
+            <div class="confirm-icon" aria-hidden="true">✓</div>
+            <h2 id="title-confirm">Booking confirmed</h2>
+            <p id="conf-msg">Thank you! Your deposit is recorded (simulation).</p>
+            <p class="confirm-ref"><span class="sr-only">Reference </span><strong id="conf-ref">—</strong></p>
+            <div class="confirm-details">
+              <div class="summary-row"><span class="label">Service</span><span class="value" id="conf-service">—</span></div>
+              <div class="summary-row"><span class="label">Barber</span><span class="value" id="conf-barber">—</span></div>
+              <div class="summary-row"><span class="label">Slot</span><span class="value" id="conf-slot">—</span></div>
+              <div class="summary-row"><span class="label">Deposit</span><span class="value" id="conf-deposit">—</span></div>
+              <div class="summary-row"><span class="label">Total price</span><span class="value" id="conf-total">—</span></div>
+              <div class="summary-row"><span class="label">Customer</span><span class="value" id="conf-name">—</span></div>
+              <div class="summary-row"><span class="label">Email</span><span class="value" id="conf-email">—</span></div>
+              <div class="summary-row"><span class="label">Payment ID</span><span class="value" id="conf-payment" style="font-family:var(--mono);font-size:0.75rem;">—</span></div>
+            </div>
+            <div class="btn-row" style="justify-content:center;">
+              <button type="button" class="btn btn-primary" id="btn-new">New booking</button>
+              <a class="btn btn-secondary" href="/exemples/barbier/">Back to salon</a>
+            </div>
+            <p style="margin-top:1.25rem;font-size:0.85rem;">
+              <a href="https://pbxmtl.ca/">pbxmtl.ca</a>
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <aside class="panel summary" id="summary" aria-label="Booking summary">
+        <button type="button" class="summary-toggle" id="summary-toggle" aria-expanded="false">
+          <span id="summary-toggle-value">Summary</span>
+          <span class="toggle-hint" id="summary-toggle-hint">Show summary</span>
+        </button>
+        <h2>Summary</h2>
+        <div class="summary-details" id="summary-details">
+          <div class="summary-row"><span class="label">Service</span><span class="value" id="sum-service">—</span></div>
+          <div class="summary-row"><span class="label">Barber</span><span class="value" id="sum-barber">—</span></div>
+          <div class="summary-row"><span class="label">Slot</span><span class="value" id="sum-slot">—</span></div>
+          <div class="summary-row"><span class="label">Total price</span><span class="value" id="sum-total">—</span></div>
+        </div>
+        <div class="summary-deposit">
+          <span class="label">Deposit</span>
+          <span class="value" id="sum-deposit-big">—</span>
+        </div>
+        <p class="summary-note">Balance is paid in shop on the day of the appointment.</p>
+      </aside>
+    </div>
+  </div>
+
+  <script src="../booking.js" defer></script>
+</body>
+</html>

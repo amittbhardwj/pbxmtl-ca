@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Réservation barbier — démo PBX MTL (site fictif)." />
+  <title>Réservation — Barbier | Démo PBX MTL</title>
+  <link rel="stylesheet" href="booking.css" />
+  <!-- Optional: uncomment when copied into the live site
+  <link rel="stylesheet" href="/demo-themes.css" />
+  -->
+  <!--
+    To enable Stripe Payment Element UI (still demo-confirm without backend):
+    <script>window.PBX_STRIPE_PUBLISHABLE_KEY = "pk_test_YOUR_KEY";</script>
+  -->
+</head>
+<body class="theme-barber ind-page">
+  <a class="skip-link" href="#booking-main">Aller au contenu</a>
+
+  <div class="demo-banner" role="status">
+    Mode démo — site fictif PBX MTL. Pas une vraie boutique.
+  </div>
+
+  <div class="booking-wrap">
+    <header class="booking-header">
+      <h1>Réserver un rendez-vous</h1>
+      <p class="subtitle">Salon barbier fictif — acompte sécurisé (démo Stripe)</p>
+      <nav class="booking-nav" aria-label="Liens">
+        <a href="/exemples/barbier/">← Retour au salon</a>
+        <a href="en/">English</a>
+        <a href="https://pbxmtl.ca/">pbxmtl.ca</a>
+      </nav>
+    </header>
+
+    <ol class="progress" id="progress" aria-label="Étapes de réservation"></ol>
+
+    <div class="booking-grid">
+      <main id="booking-main" class="panels" tabindex="-1">
+        <!-- 0 Service -->
+        <section class="panel panel-step" data-step="0" aria-labelledby="title-service">
+          <h2 id="title-service">Choisissez un service</h2>
+          <div class="options" id="options-service" role="group" aria-label="Services"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btn-next-service" disabled>Continuer</button>
+          </div>
+        </section>
+
+        <!-- 1 Barber -->
+        <section class="panel panel-step" data-step="1" hidden aria-labelledby="title-barber">
+          <h2 id="title-barber">Choisissez votre barbier</h2>
+          <div class="options" id="options-barber" role="group" aria-label="Barbiers"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-barber">Retour</button>
+            <button type="button" class="btn btn-primary" id="btn-next-barber" disabled>Continuer</button>
+          </div>
+        </section>
+
+        <!-- 2 Date -->
+        <section class="panel panel-step" data-step="2" hidden aria-labelledby="title-date">
+          <h2 id="title-date">Choisissez une date</h2>
+          <p class="subtitle" style="margin-bottom:1rem;color:var(--cream-muted);font-size:0.9rem;">
+            Ouvert mardi à samedi · prochaines disponibilités
+          </p>
+          <div class="date-grid" id="options-date" role="group" aria-label="Dates"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-date">Retour</button>
+            <button type="button" class="btn btn-primary" id="btn-next-date" disabled>Continuer</button>
+          </div>
+        </section>
+
+        <!-- 3 Time -->
+        <section class="panel panel-step" data-step="3" hidden aria-labelledby="title-time">
+          <h2 id="title-time">Choisissez une heure</h2>
+          <div class="time-grid" id="options-time" role="group" aria-label="Heures"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btn-back-time">Retour</button>
+            <button type="button" class="btn btn-primary" id="btn-next-time" disabled>Continuer</button>
+          </div>
+        </section>
+
+        <!-- 4 Customer -->
+        <section class="panel panel-step" data-step="4" hidden aria-labelledby="title-customer">
+          <h2 id="title-customer">Vos coordonnées</h2>
+          <form id="customer-form" novalidate onsubmit="return false;">
+            <div class="form-group">
+              <label for="cust-name">Nom complet</label>
+              <input id="cust-name" name="name" type="text" autocomplete="name" required placeholder="Alex Tremblay" />
+            </div>
+            <div class="form-group">
+              <label for="cust-email">Courriel</label>
+              <input id="cust-email" name="email" type="email" autocomplete="email" required placeholder="alex@exemple.ca" />
+            </div>
+            <div class="form-group">
+              <label for="cust-phone">Téléphone</label>
+              <input id="cust-phone" name="phone" type="tel" autocomplete="tel" required placeholder="(514) 555-0100" />
+              <p class="hint">Pour confirmer ou modifier le rendez-vous.</p>
+            </div>
+            <p class="form-error" id="customer-error" role="alert" aria-live="polite"></p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-secondary" id="btn-back-customer">Retour</button>
+              <button type="button" class="btn btn-primary" id="btn-next-customer">Continuer</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- 5 Payment -->
+        <section class="panel panel-step" data-step="5" hidden aria-labelledby="title-payment">
+          <h2 id="title-payment">Payer l'acompte</h2>
+          <div class="payment-box">
+            <span class="payment-mode-badge" id="payment-mode-badge">Mode démo</span>
+            <p class="payment-demo-note" id="payment-note"></p>
+            <div id="payment-element" aria-live="polite"></div>
+            <div class="btn-row">
+              <button type="button" class="btn btn-secondary" id="btn-back-payment">Retour</button>
+              <button type="button" class="btn btn-primary btn-demo" id="btn-pay">Simuler le paiement (démo)</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 Confirm -->
+        <section class="panel panel-step" data-step="6" id="panel-confirm" hidden aria-labelledby="title-confirm">
+          <div class="confirm-box">
+            <div class="confirm-icon" aria-hidden="true">✓</div>
+            <h2 id="title-confirm">Réservation confirmée</h2>
+            <p id="conf-msg">Merci ! Votre acompte est enregistré (simulation).</p>
+            <p class="confirm-ref"><span class="sr-only">Référence </span><strong id="conf-ref">—</strong></p>
+            <div class="confirm-details">
+              <div class="summary-row"><span class="label">Service</span><span class="value" id="conf-service">—</span></div>
+              <div class="summary-row"><span class="label">Barbier</span><span class="value" id="conf-barber">—</span></div>
+              <div class="summary-row"><span class="label">Créneau</span><span class="value" id="conf-slot">—</span></div>
+              <div class="summary-row"><span class="label">Acompte</span><span class="value" id="conf-deposit">—</span></div>
+              <div class="summary-row"><span class="label">Prix total</span><span class="value" id="conf-total">—</span></div>
+              <div class="summary-row"><span class="label">Client</span><span class="value" id="conf-name">—</span></div>
+              <div class="summary-row"><span class="label">Courriel</span><span class="value" id="conf-email">—</span></div>
+              <div class="summary-row"><span class="label">ID paiement</span><span class="value" id="conf-payment" style="font-family:var(--mono);font-size:0.75rem;">—</span></div>
+            </div>
+            <div class="btn-row" style="justify-content:center;">
+              <button type="button" class="btn btn-primary" id="btn-new">Nouvelle réservation</button>
+              <a class="btn btn-secondary" href="/exemples/barbier/">Retour au salon</a>
+            </div>
+            <p style="margin-top:1.25rem;font-size:0.85rem;">
+              <a href="https://pbxmtl.ca/">pbxmtl.ca</a>
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <aside class="panel summary" id="summary" aria-label="Résumé de la réservation">
+        <button type="button" class="summary-toggle" id="summary-toggle" aria-expanded="false">
+          <span id="summary-toggle-value">Résumé</span>
+          <span class="toggle-hint" id="summary-toggle-hint">Voir le résumé</span>
+        </button>
+        <h2>Résumé</h2>
+        <div class="summary-details" id="summary-details">
+          <div class="summary-row"><span class="label">Service</span><span class="value" id="sum-service">—</span></div>
+          <div class="summary-row"><span class="label">Barbier</span><span class="value" id="sum-barber">—</span></div>
+          <div class="summary-row"><span class="label">Créneau</span><span class="value" id="sum-slot">—</span></div>
+          <div class="summary-row"><span class="label">Prix total</span><span class="value" id="sum-total">—</span></div>
+        </div>
+        <div class="summary-deposit">
+          <span class="label">Acompte</span>
+          <span class="value" id="sum-deposit-big">—</span>
+        </div>
+        <p class="summary-note">Le solde se paie en boutique le jour du rendez-vous.</p>
+      </aside>
+    </div>
+  </div>
+
+  <script src="booking.js" defer></script>
+</body>
+</html>
