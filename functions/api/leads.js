@@ -15,8 +15,15 @@ export async function onRequest({ request, env }) {
   }
 
   const origin = request.headers.get('origin');
-  if (origin && new URL(origin).host !== new URL(request.url).host) {
-    return json({ ok: false, error: 'Origin not allowed.' }, 403);
+  if (origin) {
+    /* A malformed Origin must be rejected, not thrown on. */
+    let sameOrigin = false;
+    try {
+      sameOrigin = new URL(origin).host === new URL(request.url).host;
+    } catch {
+      sameOrigin = false;
+    }
+    if (!sameOrigin) return json({ ok: false, error: 'Origin not allowed.' }, 403);
   }
 
   const contentLength = Number(request.headers.get('content-length') || 0);
@@ -69,24 +76,53 @@ export async function onRequest({ request, env }) {
     lead.message
   ];
 
-  const delivery = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: env.CONTACT_FROM_EMAIL,
-      to: [env.CONTACT_TO_EMAIL],
-      reply_to: lead.email,
-      subject: `PBXMTL lead — ${lead.business}`,
-      text: lines.join('\n')
-    })
-  });
+  let delivery;
+  try {
+    delivery = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL,
+        to: [env.CONTACT_TO_EMAIL],
+        reply_to: lead.email,
+        subject: `PBXMTL lead — ${lead.business}`,
+        text: lines.join('\n')
+      })
+    });
+  } catch (error) {
+    /* A network-level rejection must surface as the documented 502, not a raw 500. */
+    console.error('Lead delivery request failed', error);
+    return json({ ok: false, error: 'Delivery failed.' }, 502);
+  }
 
   if (!delivery.ok) {
     console.error('Lead delivery failed', delivery.status, await delivery.text());
     return json({ ok: false, error: 'Delivery failed.' }, 502);
+  }
+
+  /* Best-effort: put the lead in front of whoever runs the site, so it is not
+     lost if the main inbox is missed. A failure here never fails the request. */
+  try {
+    const alertSubject = `ACTION NEEDED — new PBXMTL lead: ${lead.business}`;
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL,
+        to: [env.CONTACT_TO_EMAIL],
+        reply_to: lead.email,
+        subject: alertSubject,
+        text: `ACTION NEEDED — a new website inquiry is waiting.\n\nReply to this email and the answer goes straight back to ${lead.email}.\n\n${lines.join('\n')}`
+      })
+    });
+  } catch (error) {
+    console.error('Lead alert email failed', error);
   }
 
   return json({ ok: true });

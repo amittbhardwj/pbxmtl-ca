@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node scripts/audit-site.mjs && node scripts/test-leads.mjs"
+    "test": "node scripts/audit-site.mjs && node scripts/test-leads.mjs && node scripts/test-analytics.mjs"
   }
 }
