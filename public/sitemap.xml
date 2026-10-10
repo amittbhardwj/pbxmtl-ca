@@ -3,56 +3,98 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://pbxmtl.ca/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/"/>
   </url>
   <url>
     <loc>https://pbxmtl.ca/en/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/"/>
   </url>
   <url>
     <loc>https://pbxmtl.ca/tutoring-centres/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/tutoring-centres/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/tutoring-centres/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/tutoring-centres/"/>
   </url>
   <url>
     <loc>https://pbxmtl.ca/en/tutoring-centres/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/tutoring-centres/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/tutoring-centres/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/tutoring-centres/"/>
   </url>
   <url>
+    <loc>https://pbxmtl.ca/realisations/ramath-plus/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/realisations/ramath-plus/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/work/ramath-plus/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/realisations/ramath-plus/"/>
+  </url>
+  <url>
+    <loc>https://pbxmtl.ca/en/work/ramath-plus/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/realisations/ramath-plus/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/work/ramath-plus/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/realisations/ramath-plus/"/>
+  </url>
+  <url>
+    <loc>https://pbxmtl.ca/liste-contenu/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/liste-contenu/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/content-checklist/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/liste-contenu/"/>
+  </url>
+  <url>
+    <loc>https://pbxmtl.ca/en/content-checklist/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/liste-contenu/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/content-checklist/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/liste-contenu/"/>
+  </url>
+  <url>
+    <loc>https://pbxmtl.ca/entente/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/entente/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/entente/"/>
+  </url>
+  <url>
+    <loc>https://pbxmtl.ca/en/agreement/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/entente/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/entente/"/>
+  </url>
+  <url>
     <loc>https://pbxmtl.ca/slot/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/slot/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/slot/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/slot/"/>
   </url>
   <url>
     <loc>https://pbxmtl.ca/en/slot/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/slot/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/slot/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/slot/"/>
   </url>
   <url>
     <loc>https://pbxmtl.ca/confidentialite/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/confidentialite/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/privacy/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/confidentialite/"/>
   </url>
   <url>
     <loc>https://pbxmtl.ca/en/privacy/</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://pbxmtl.ca/confidentialite/"/>
     <xhtml:link rel="alternate" hreflang="en-CA" href="https://pbxmtl.ca/en/privacy/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pbxmtl.ca/confidentialite/"/>

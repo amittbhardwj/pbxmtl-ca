@@ -10,11 +10,20 @@ const pages = [
   ['slot/index.html', 'fr-CA', 'https://pbxmtl.ca/slot/'],
   ['en/slot/index.html', 'en-CA', 'https://pbxmtl.ca/en/slot/'],
   ['confidentialite/index.html', 'fr-CA', 'https://pbxmtl.ca/confidentialite/'],
-  ['en/privacy/index.html', 'en-CA', 'https://pbxmtl.ca/en/privacy/']
+  ['en/privacy/index.html', 'en-CA', 'https://pbxmtl.ca/en/privacy/'],
+  ['realisations/ramath-plus/index.html', 'fr-CA', 'https://pbxmtl.ca/realisations/ramath-plus/'],
+  ['en/work/ramath-plus/index.html', 'en-CA', 'https://pbxmtl.ca/en/work/ramath-plus/'],
+  ['liste-contenu/index.html', 'fr-CA', 'https://pbxmtl.ca/liste-contenu/'],
+  ['en/content-checklist/index.html', 'en-CA', 'https://pbxmtl.ca/en/content-checklist/'],
+  ['entente/index.html', 'fr-CA', 'https://pbxmtl.ca/entente/'],
+  ['en/agreement/index.html', 'en-CA', 'https://pbxmtl.ca/en/agreement/']
 ];
 
 const failures = [];
 const count = (text, pattern) => (text.match(pattern) || []).length;
+const check2 = (relative, condition, message) => {
+  if (!condition) failures.push(`${relative}: ${message}`);
+};
 
 for (const [relative, language, canonical] of pages) {
   const html = fs.readFileSync(path.join(root, relative), 'utf8');
@@ -53,9 +62,47 @@ for (const required of ['robots.txt', 'sitemap.xml', '404.html', '_headers', '_r
 }
 
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
-if (count(sitemap, /<url>/g) !== 8) failures.push('sitemap: expected eight URLs');
-if (count(sitemap, /hreflang=/g) !== 24) failures.push('sitemap: expected twenty-four alternate links');
-if (count(sitemap, /<lastmod>/g) !== 8) failures.push('sitemap: expected a lastmod on every URL');
+if (count(sitemap, /<url>/g) !== 14) failures.push('sitemap: expected fourteen URLs');
+if (count(sitemap, /hreflang=/g) !== 42) failures.push('sitemap: expected forty-two alternate links');
+if (count(sitemap, /<lastmod>/g) !== 14) failures.push('sitemap: expected a lastmod on every URL');
+
+/* Every indexable page must be in the sitemap, and every <loc> must exist locally. */
+const sitemapLocs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+for (const [relative, , canonical] of pages) {
+  if (!sitemapLocs.includes(canonical)) failures.push(`sitemap: missing ${canonical} (${relative})`);
+}
+for (const loc of sitemapLocs) {
+  const local = path.join(root, loc.replace('https://pbxmtl.ca', ''));
+  const target = local.endsWith('/') || local === root ? path.join(local, 'index.html') : local;
+  if (!fs.existsSync(target)) failures.push(`sitemap: ${loc} has no local file`);
+}
+
+/* The FAQ shown to visitors and the FAQPage structured data must agree. */
+for (const relative of ['index.html', 'en/index.html']) {
+  const html = fs.readFileSync(path.join(root, relative), 'utf8');
+  const schema = html.match(/\{"@type":"FAQPage","mainEntity\":[\s\S]*?\]\}/);
+  if (!schema) { failures.push(`${relative}: missing FAQPage JSON-LD`); continue; }
+  let parsed;
+  try { parsed = JSON.parse(schema[0]); }
+  catch { failures.push(`${relative}: FAQPage JSON-LD is not valid JSON`); continue; }
+  const schemaQuestions = parsed.mainEntity.map((q) => q.name);
+  const visible = [...html.matchAll(/<details><summary>([^<]+?)<span>\+<\/span><\/summary>/g)].map((m) => m[1]);
+  check2(relative, schemaQuestions.length === visible.length,
+    `FAQ schema has ${schemaQuestions.length} questions but the page shows ${visible.length}`);
+  for (const name of schemaQuestions) {
+    check2(relative, visible.includes(name), `FAQ question not visible on the page: "${name}"`);
+  }
+  check2(relative, schemaQuestions.length >= 9, `FAQ schema should carry at least nine questions, found ${schemaQuestions.length}`);
+  check2(relative, parsed.mainEntity.every((q) => q.acceptedAnswer.text.length > 60),
+    'every FAQ answer should carry real text, not a stub');
+}
+
+/* Every page must state a reachable owner and never a stray escape sequence. */
+for (const [relative] of pages) {
+  const html = fs.readFileSync(path.join(root, relative), 'utf8');
+  check2(relative, html.includes('mailto:amitt.bhardwj@gmail.com'), 'missing a reachable owner email');
+  check2(relative, !/\\/.test(html), 'contains a stray backslash escape');
+}
 
 /* Privacy + slot links must exist wherever the form is offered. */
 for (const [relative] of pages.slice(0, 4)) {
@@ -93,4 +140,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('Static audit passed for eight bilingual pages.');
+console.log('Static audit passed for fourteen bilingual pages.');

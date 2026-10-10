@@ -1,4 +1,25 @@
 (() => {
+  /* ----------------------------------------------------------------
+     Next available slot.
+     Set NEXT_SLOT_ISO to the first day of the month you are opening
+     (YYYY-MM-01). Leave it empty and the chip keeps its neutral
+     fallback text instead of showing a date that may be wrong.
+     ---------------------------------------------------------------- */
+  const NEXT_SLOT_ISO = '';
+
+  const chip = document.querySelector('[data-next-slot]');
+  if (chip && NEXT_SLOT_ISO) {
+    const target = new Date(NEXT_SLOT_ISO + 'T12:00:00');
+    if (!Number.isNaN(target.getTime())) {
+      const isEn = (document.documentElement.lang || 'fr-CA').toLowerCase().startsWith('en');
+      const locale = isEn ? 'en-CA' : 'fr-CA';
+      const label = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(target);
+      chip.textContent = (isEn ? 'Next slot: ' : 'Prochaine place : ') + label;
+    }
+  }
+})();
+
+(() => {
   const menuButton = document.querySelector('.menu-button');
   const navigation = document.querySelector('.nav-links');
 
