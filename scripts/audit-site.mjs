@@ -115,16 +115,29 @@ for (const [relative] of pages.slice(0, 4)) {
 /* Each new page pair must cross-link: a language switch that points at its own
    page is a dead control, and the wrong hreflang misleads crawlers. */
 const pairs = [
+  ['index.html', 'https://pbxmtl.ca/en/'],
+  ['en/index.html', 'https://pbxmtl.ca/'],
   ['slot/index.html', 'https://pbxmtl.ca/en/slot/'],
   ['en/slot/index.html', 'https://pbxmtl.ca/slot/'],
   ['confidentialite/index.html', 'https://pbxmtl.ca/en/privacy/'],
-  ['en/privacy/index.html', 'https://pbxmtl.ca/confidentialite/']
+  ['en/privacy/index.html', 'https://pbxmtl.ca/confidentialite/'],
+  ['realisations/ramath-plus/index.html', 'https://pbxmtl.ca/en/work/ramath-plus/'],
+  ['en/work/ramath-plus/index.html', 'https://pbxmtl.ca/realisations/ramath-plus/'],
+  ['liste-contenu/index.html', 'https://pbxmtl.ca/en/content-checklist/'],
+  ['en/content-checklist/index.html', 'https://pbxmtl.ca/liste-contenu/'],
+  ['entente/index.html', 'https://pbxmtl.ca/en/agreement/'],
+  ['en/agreement/index.html', 'https://pbxmtl.ca/entente/']
 ];
 for (const [relative, expected] of pairs) {
   const html = fs.readFileSync(path.join(root, relative), 'utf8');
   const match = html.match(/<a href="([^"]+)" class="language-button" hreflang="([^"]+)"/);
   if (!match) { failures.push(`${relative}: missing language switch`); continue; }
-  if (match[1] !== expected) failures.push(`${relative}: language switch points at ${match[1]}, expected ${expected}`);
+  /* Accept either the absolute URL or its root-relative equivalent: both land on the
+     same page, and the homepages legitimately use the relative form. */
+  const acceptable = [expected, expected.replace('https://pbxmtl.ca', '')];
+  if (!acceptable.includes(match[1])) {
+    failures.push(`${relative}: language switch points at ${match[1]}, expected ${expected}`);
+  }
   const wantLang = relative.startsWith('en/') ? 'fr-CA' : 'en-CA';
   if (match[2] !== wantLang) failures.push(`${relative}: language switch hreflang is ${match[2]}, expected ${wantLang}`);
 }
