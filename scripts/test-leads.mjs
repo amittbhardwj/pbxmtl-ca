@@ -26,11 +26,11 @@ const env = {
 
 const validLead = {
   name: 'Test Person',
-  business: 'Test Tutoring',
+  business: 'Test Company',
   email: 'person@example.com',
   website: 'https://example.com',
-  need: 'Bilingual launch site',
-  message: 'I need a clear bilingual website.',
+  need: 'Build and deploy a workflow',
+  message: 'We want an AI workflow that drafts quotes for review.',
   agreement: true,
   language: 'en'
 };
@@ -46,7 +46,7 @@ try {
   assert.equal(success.status, 200);
   assert.equal(delivered.url, 'https://api.resend.com/emails');
   assert.equal(delivered.body.reply_to, validLead.email);
-  assert.match(delivered.body.text, /Test Tutoring/);
+  assert.match(delivered.body.text, /Test Company/);
 
   const invalid = await onRequest({ request: request({ ...validLead, email: 'bad' }), env });
   assert.equal(invalid.status, 400);

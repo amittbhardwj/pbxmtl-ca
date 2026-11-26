@@ -5,18 +5,14 @@ const root = path.resolve('public');
 const pages = [
   ['index.html', 'fr-CA', 'https://pbxmtl.ca/'],
   ['en/index.html', 'en-CA', 'https://pbxmtl.ca/en/'],
-  ['tutoring-centres/index.html', 'fr-CA', 'https://pbxmtl.ca/tutoring-centres/'],
-  ['en/tutoring-centres/index.html', 'en-CA', 'https://pbxmtl.ca/en/tutoring-centres/'],
-  ['slot/index.html', 'fr-CA', 'https://pbxmtl.ca/slot/'],
-  ['en/slot/index.html', 'en-CA', 'https://pbxmtl.ca/en/slot/'],
-  ['confidentialite/index.html', 'fr-CA', 'https://pbxmtl.ca/confidentialite/'],
-  ['en/privacy/index.html', 'en-CA', 'https://pbxmtl.ca/en/privacy/'],
   ['realisations/ramath-plus/index.html', 'fr-CA', 'https://pbxmtl.ca/realisations/ramath-plus/'],
   ['en/work/ramath-plus/index.html', 'en-CA', 'https://pbxmtl.ca/en/work/ramath-plus/'],
-  ['liste-contenu/index.html', 'fr-CA', 'https://pbxmtl.ca/liste-contenu/'],
-  ['en/content-checklist/index.html', 'en-CA', 'https://pbxmtl.ca/en/content-checklist/'],
+  ['realisations/spin-and-snap/index.html', 'fr-CA', 'https://pbxmtl.ca/realisations/spin-and-snap/'],
+  ['en/work/spin-and-snap/index.html', 'en-CA', 'https://pbxmtl.ca/en/work/spin-and-snap/'],
   ['entente/index.html', 'fr-CA', 'https://pbxmtl.ca/entente/'],
-  ['en/agreement/index.html', 'en-CA', 'https://pbxmtl.ca/en/agreement/']
+  ['en/agreement/index.html', 'en-CA', 'https://pbxmtl.ca/en/agreement/'],
+  ['confidentialite/index.html', 'fr-CA', 'https://pbxmtl.ca/confidentialite/'],
+  ['en/privacy/index.html', 'en-CA', 'https://pbxmtl.ca/en/privacy/']
 ];
 
 const failures = [];
@@ -62,9 +58,9 @@ for (const required of ['robots.txt', 'sitemap.xml', '404.html', '_headers', '_r
 }
 
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
-if (count(sitemap, /<url>/g) !== 14) failures.push('sitemap: expected fourteen URLs');
-if (count(sitemap, /hreflang=/g) !== 42) failures.push('sitemap: expected forty-two alternate links');
-if (count(sitemap, /<lastmod>/g) !== 14) failures.push('sitemap: expected a lastmod on every URL');
+if (count(sitemap, /<url>/g) !== pages.length) failures.push(`sitemap: expected ${pages.length} URLs`);
+if (count(sitemap, /hreflang=/g) !== pages.length * 3) failures.push(`sitemap: expected ${pages.length * 3} alternate links`);
+if (count(sitemap, /<lastmod>/g) !== pages.length) failures.push('sitemap: expected a lastmod on every URL');
 
 /* Every indexable page must be in the sitemap, and every <loc> must exist locally. */
 const sitemapLocs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
@@ -104,29 +100,28 @@ for (const [relative] of pages) {
   check2(relative, !/\\/.test(html), 'contains a stray backslash escape');
 }
 
-/* Privacy + slot links must exist wherever the form is offered. */
-for (const [relative] of pages.slice(0, 4)) {
+/* Privacy + engagement-terms links must exist wherever the form is offered. */
+for (const [relative] of pages.slice(0, 2)) {
   const html = fs.readFileSync(path.join(root, relative), 'utf8');
   if (!/confidentialite\/|en\/privacy\//.test(html)) failures.push(`${relative}: missing privacy-policy link`);
-  if (!/slot\//.test(html)) failures.push(`${relative}: missing slot/deposit link`);
+  if (!/entente\/|en\/agreement\//.test(html)) failures.push(`${relative}: missing engagement-terms link`);
+  if (!html.includes('data-lead-form')) failures.push(`${relative}: missing the contact form`);
   if (!html.includes('/assets/analytics.js')) failures.push(`${relative}: missing analytics loader`);
 }
 
-/* Each new page pair must cross-link: a language switch that points at its own
+/* Each page pair must cross-link: a language switch that points at its own
    page is a dead control, and the wrong hreflang misleads crawlers. */
 const pairs = [
   ['index.html', 'https://pbxmtl.ca/en/'],
   ['en/index.html', 'https://pbxmtl.ca/'],
-  ['slot/index.html', 'https://pbxmtl.ca/en/slot/'],
-  ['en/slot/index.html', 'https://pbxmtl.ca/slot/'],
-  ['confidentialite/index.html', 'https://pbxmtl.ca/en/privacy/'],
-  ['en/privacy/index.html', 'https://pbxmtl.ca/confidentialite/'],
   ['realisations/ramath-plus/index.html', 'https://pbxmtl.ca/en/work/ramath-plus/'],
   ['en/work/ramath-plus/index.html', 'https://pbxmtl.ca/realisations/ramath-plus/'],
-  ['liste-contenu/index.html', 'https://pbxmtl.ca/en/content-checklist/'],
-  ['en/content-checklist/index.html', 'https://pbxmtl.ca/liste-contenu/'],
+  ['realisations/spin-and-snap/index.html', 'https://pbxmtl.ca/en/work/spin-and-snap/'],
+  ['en/work/spin-and-snap/index.html', 'https://pbxmtl.ca/realisations/spin-and-snap/'],
   ['entente/index.html', 'https://pbxmtl.ca/en/agreement/'],
-  ['en/agreement/index.html', 'https://pbxmtl.ca/entente/']
+  ['en/agreement/index.html', 'https://pbxmtl.ca/entente/'],
+  ['confidentialite/index.html', 'https://pbxmtl.ca/en/privacy/'],
+  ['en/privacy/index.html', 'https://pbxmtl.ca/confidentialite/']
 ];
 for (const [relative, expected] of pairs) {
   const html = fs.readFileSync(path.join(root, relative), 'utf8');
@@ -142,10 +137,43 @@ for (const [relative, expected] of pairs) {
   if (match[2] !== wantLang) failures.push(`${relative}: language switch hreflang is ${match[2]}, expected ${wantLang}`);
 }
 
-/* Fictional demo pages must not be indexed. */
-for (const demo of ['exemples/index.html', 'exemples/peintre/index.html', 'en/examples/index.html', 'en/examples/painter/index.html']) {
-  const html = fs.readFileSync(path.join(root, demo), 'utf8');
-  if (!html.includes('name="robots" content="noindex, follow"')) failures.push(`${demo}: expected noindex, follow`);
+/* The retired $799-offer routes must 301 to a page that exists, and their old pages must be
+   gone so the redirect, not a stale page, answers. */
+const rules = fs.readFileSync(path.join(root, '_redirects'), 'utf8')
+  .split('\n').map((line) => line.trim().split(/\s+/)).filter((rule) => rule.length === 3);
+for (const source of ['/tutoring-centres/', '/en/tutoring-centres/', '/liste-contenu/', '/en/content-checklist/',
+  '/slot/', '/en/slot/', '/exemples/', '/exemples/*', '/en/examples/', '/en/examples/*']) {
+  const rule = rules.find((r) => r[0] === source);
+  if (!rule || rule[2] !== '301') { failures.push(`_redirects: ${source} must be a 301`); continue; }
+  const destination = rule[1].split('#')[0];
+  const target = destination.endsWith('/') ? path.join(root, destination, 'index.html') : path.join(root, destination);
+  if (!fs.existsSync(target)) failures.push(`_redirects: ${source} points at a missing page ${rule[1]}`);
+  if (!source.endsWith('*') && fs.existsSync(path.join(root, source, 'index.html'))) {
+    failures.push(`${source} is retired but its page still exists`);
+  }
+}
+
+/* Whole-tree content guards. The old offer must not leak back; preview and operator hosts stay
+   private; and in Québec "engineer"/"ingénieur" is a reserved professional title, so it may only
+   appear as the name of the roles being sought, never as a self-description. */
+const htmlFiles = [];
+const walk = (dir) => {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(full);
+    else if (full.endsWith('.html')) htmlFiles.push(full);
+  }
+};
+walk(root);
+for (const file of htmlFiles) {
+  const relative = path.relative(root, file);
+  const html = fs.readFileSync(file, 'utf8');
+  if (/\$\s?799|799(?:\u00a0|&nbsp;|\s)?\$/.test(html)) failures.push(`${relative}: mentions the retired $799 offer`);
+  if (/workers\.dev/.test(html)) failures.push(`${relative}: links a workers.dev preview or operator URL`);
+  const withoutRoleName = html.replace(/Forward Deployed Engineer \(FDE\)/g, '');
+  if (/\bengineer\b|ingénieur/i.test(withoutRoleName)) {
+    failures.push(`${relative}: uses "engineer"/"ingénieur" outside the role name (reserved title in Québec)`);
+  }
 }
 
 if (failures.length) {
@@ -153,4 +181,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('Static audit passed for fourteen bilingual pages.');
+console.log(`Static audit passed for ${pages.length} bilingual pages and ${htmlFiles.length} HTML files.`);

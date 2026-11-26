@@ -9,8 +9,9 @@
     <path d="M67 21L44 44" stroke="#2997ff" stroke-linecap="round" stroke-width="9"/>
     <circle cx="44" cy="44" r="7" fill="#0071e3" stroke="#222227" stroke-width="3"/>
   </g>
-  <text x="244" y="183" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" letter-spacing="-2">PBXMTL.ca</text>
-  <text x="130" y="302" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="60" font-weight="800" letter-spacing="-2">Bilingual launch websites</text>
-  <text x="130" y="375" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="60" font-weight="800" letter-spacing="-2">for Montréal businesses.</text>
-  <text x="130" y="474" fill="#9da0a8" font-family="Arial, Helvetica, sans-serif" font-size="31">Fixed pilot price · CAD $799 · One project per month</text>
+  <text x="244" y="160" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="800" letter-spacing="-1.5">Amitt Bhardwj</text>
+  <text x="244" y="200" fill="#9da0a8" font-family="Arial, Helvetica, sans-serif" font-size="26">PBXMTL.ca · Montréal</text>
+  <text x="130" y="318" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="800" letter-spacing="-2">Forward-deployed AI developer</text>
+  <text x="130" y="386" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="800" letter-spacing="-2">and AI solutions consultant.</text>
+  <text x="130" y="474" fill="#9da0a8" font-family="Arial, Helvetica, sans-serif" font-size="29">Recent projects: Ramath+ · Spin and Snap · FR / EN</text>
 </svg>
