@@ -5,10 +5,6 @@ const root = path.resolve('public');
 const pages = [
   ['index.html', 'fr-CA', 'https://pbxmtl.ca/'],
   ['en/index.html', 'en-CA', 'https://pbxmtl.ca/en/'],
-  ['realisations/ramath-plus/index.html', 'fr-CA', 'https://pbxmtl.ca/realisations/ramath-plus/'],
-  ['en/work/ramath-plus/index.html', 'en-CA', 'https://pbxmtl.ca/en/work/ramath-plus/'],
-  ['realisations/spin-and-snap/index.html', 'fr-CA', 'https://pbxmtl.ca/realisations/spin-and-snap/'],
-  ['en/work/spin-and-snap/index.html', 'en-CA', 'https://pbxmtl.ca/en/work/spin-and-snap/'],
   ['entente/index.html', 'fr-CA', 'https://pbxmtl.ca/entente/'],
   ['en/agreement/index.html', 'en-CA', 'https://pbxmtl.ca/en/agreement/'],
   ['confidentialite/index.html', 'fr-CA', 'https://pbxmtl.ca/confidentialite/'],
@@ -109,15 +105,23 @@ for (const [relative] of pages.slice(0, 2)) {
   if (!html.includes('/assets/analytics.js')) failures.push(`${relative}: missing analytics loader`);
 }
 
+/* Owner's call (2026-11-26): each recent project is a short description plus a screenshot, with no
+   links out, and no case-study pages. */
+for (const relative of ['index.html', 'en/index.html']) {
+  const html = fs.readFileSync(path.join(root, relative), 'utf8');
+  const cards = [...html.matchAll(/<article class="work-card">([\s\S]*?)<\/article>/g)].map((m) => m[1]);
+  check2(relative, cards.length === 2, `expected two project cards, found ${cards.length}`);
+  for (const card of cards) {
+    check2(relative, !/<a\s/i.test(card), 'a project card contains a link');
+    check2(relative, /<img src="\/assets\/[^"]+\.(?:jpg|png|webp)"/.test(card), 'a project card has no screenshot');
+  }
+}
+
 /* Each page pair must cross-link: a language switch that points at its own
    page is a dead control, and the wrong hreflang misleads crawlers. */
 const pairs = [
   ['index.html', 'https://pbxmtl.ca/en/'],
   ['en/index.html', 'https://pbxmtl.ca/'],
-  ['realisations/ramath-plus/index.html', 'https://pbxmtl.ca/en/work/ramath-plus/'],
-  ['en/work/ramath-plus/index.html', 'https://pbxmtl.ca/realisations/ramath-plus/'],
-  ['realisations/spin-and-snap/index.html', 'https://pbxmtl.ca/en/work/spin-and-snap/'],
-  ['en/work/spin-and-snap/index.html', 'https://pbxmtl.ca/realisations/spin-and-snap/'],
   ['entente/index.html', 'https://pbxmtl.ca/en/agreement/'],
   ['en/agreement/index.html', 'https://pbxmtl.ca/entente/'],
   ['confidentialite/index.html', 'https://pbxmtl.ca/en/privacy/'],
@@ -142,7 +146,8 @@ for (const [relative, expected] of pairs) {
 const rules = fs.readFileSync(path.join(root, '_redirects'), 'utf8')
   .split('\n').map((line) => line.trim().split(/\s+/)).filter((rule) => rule.length === 3);
 for (const source of ['/tutoring-centres/', '/en/tutoring-centres/', '/liste-contenu/', '/en/content-checklist/',
-  '/slot/', '/en/slot/', '/exemples/', '/exemples/*', '/en/examples/', '/en/examples/*']) {
+  '/slot/', '/en/slot/', '/exemples/', '/exemples/*', '/en/examples/', '/en/examples/*',
+  '/realisations/ramath-plus/', '/en/work/ramath-plus/']) {
   const rule = rules.find((r) => r[0] === source);
   if (!rule || rule[2] !== '301') { failures.push(`_redirects: ${source} must be a 301`); continue; }
   const destination = rule[1].split('#')[0];
@@ -170,6 +175,10 @@ for (const file of htmlFiles) {
   const html = fs.readFileSync(file, 'utf8');
   if (/\$\s?799|799(?:\u00a0|&nbsp;|\s)?\$/.test(html)) failures.push(`${relative}: mentions the retired $799 offer`);
   if (/workers\.dev/.test(html)) failures.push(`${relative}: links a workers.dev preview or operator URL`);
+  /* Spin and Snap is a client's business; no project is presented as the owner's own. */
+  if (/my own (?:business|company)|ma propre entreprise/i.test(html)) {
+    failures.push(`${relative}: presents a project as the owner's own business`);
+  }
   const withoutRoleName = html.replace(/Forward Deployed Engineer \(FDE\)/g, '');
   if (/\bengineer\b|ingénieur/i.test(withoutRoleName)) {
     failures.push(`${relative}: uses "engineer"/"ingénieur" outside the role name (reserved title in Québec)`);

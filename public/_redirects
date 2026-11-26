@@ -1,8 +1,12 @@
 /en                          /en/                         301
-/tutoring-centres/           /realisations/ramath-plus/   301
-/tutoring-centres            /realisations/ramath-plus/   301
-/en/tutoring-centres/        /en/work/ramath-plus/        301
-/en/tutoring-centres         /en/work/ramath-plus/        301
+/tutoring-centres/           /#projets                    301
+/tutoring-centres            /#projets                    301
+/en/tutoring-centres/        /en/#projects                301
+/en/tutoring-centres         /en/#projects                301
+/realisations/ramath-plus/   /#projets                    301
+/realisations/ramath-plus    /#projets                    301
+/en/work/ramath-plus/        /en/#projects                301
+/en/work/ramath-plus         /en/#projects                301
 /liste-contenu/              /                            301
 /liste-contenu               /                            301
 /en/content-checklist/       /en/                         301
